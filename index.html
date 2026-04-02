@@ -1,0 +1,218 @@
+depois
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Calculadora de Impressão 3D</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+    }
+
+    body {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+      background: linear-gradient(135deg, #4cafef, #4CAF50);
+      padding: 20px;
+    }
+
+    .container {
+      background: #fff;
+      padding: 25px;
+      border-radius: 15px;
+      max-width: 500px;
+      width: 100%;
+      box-shadow: 0 5px 20px rgba(0, 0, 0, 0.2);
+      animation: fadeIn 0.5s ease-in-out;
+    }
+
+    h2 {
+      text-align: center;
+      margin-bottom: 20px;
+      color: #333;
+    }
+
+    label {
+      font-weight: bold;
+      margin-top: 15px;
+      display: block;
+      color: #444;
+    }
+
+    input {
+      margin-top: 5px;
+      width: 100%;
+      padding: 10px;
+      border: 1px solid #ddd;
+      border-radius: 8px;
+      transition: border 0.2s;
+    }
+
+    input:focus {
+      border: 1px solid #4CAF50;
+      outline: none;
+    }
+
+    button {
+      margin-top: 20px;
+      width: 100%;
+      padding: 12px;
+      border: none;
+      border-radius: 8px;
+      background: #4CAF50;
+      color: white;
+      font-size: 16px;
+      font-weight: bold;
+      cursor: pointer;
+      transition: background 0.3s;
+    }
+
+    button:hover {
+      background: #43a047;
+    }
+
+    .resultado {
+      margin-top: 25px;
+      padding: 15px;
+      background: #e8f5e9;
+      border-left: 5px solid #4CAF50;
+      border-radius: 8px;
+      color: #333;
+      font-size: 15px;
+      line-height: 1.6;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(-10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    @media (max-width: 480px) {
+      body {
+        padding: 10px;
+      }
+
+      .container {
+        padding: 15px;
+        border-radius: 10px;
+        box-shadow: 0 3px 10px rgba(0, 0, 0, 0.15);
+      }
+
+      h2 {
+        font-size: 20px;
+      }
+
+      label {
+        font-size: 14px;
+      }
+
+      input {
+        font-size: 14px;
+        padding: 8px;
+      }
+
+      button {
+        font-size: 15px;
+        padding: 10px;
+      }
+
+      .resultado {
+        font-size: 14px;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="container">
+    <h2>Calculadora de Impressão 3D</h2>
+
+    <label>Peso da peça (g):</label>
+    <input type="number" id="peso" step="0.1">
+
+    <label>Preço do filamento por kg (R$):</label>
+    <input type="number" id="precoFilamento" step="0.01" value="109.00">
+
+    <label>Tempo de impressão (horas):</label>
+    <input type="number" id="horas" step="0.1">
+
+    <label>Consumo da impressora (watts):</label>
+    <input type="number" id="watts" step="1" value="300">
+
+    <label>Tarifa de energia (R$/kWh):</label>
+    <input type="number" id="tarifa" step="0.01" value="0.9">
+
+    <label>Preço da impressora (R$):</label>
+    <input type="number" id="precoImpressora" step="0.01">
+
+    <label>Vida útil da impressora (horas):</label>
+    <input type="number" id="vidaUtil" step="1" value="2000">
+
+    <label>Custo de mão de obra (R$/hora):</label>
+    <input type="number" id="maoObra" step="0.1" value="10">
+
+    <label>Outros custos (R$):</label>
+    <input type="number" id="outros" step="0.01" value="0">
+
+    <label>Quantidade de itens:</label>
+    <input type="number" id="quantidade" step="1" min="1" value="1">
+
+    <label>Margem de lucro (%):</label>
+    <input type="number" id="margem" step="1" value="50">
+
+    <button onclick="calcular()">Calcular Preço</button>
+
+    <div class="resultado" id="resultado">
+      Preencha os campos e clique em "Calcular Preço".
+    </div>
+  </div>
+
+  <script>
+    function lerNumero(id) {
+      const valor = document.getElementById(id).value.replace(",", ".");
+      return parseFloat(valor) || 0;
+    }
+
+    function calcular() {
+      const peso = lerNumero("peso");
+      const precoFilamento = lerNumero("precoFilamento");
+      const horas = lerNumero("horas");
+      const watts = lerNumero("watts");
+      const tarifa = lerNumero("tarifa");
+      const precoImpressora = lerNumero("precoImpressora");
+      const vidaUtil = lerNumero("vidaUtil") || 1;
+      const maoObra = lerNumero("maoObra");
+      const outros = lerNumero("outros");
+      const quantidade = Math.max(1, parseInt(document.getElementById("quantidade").value) || 1);
+      const margem = lerNumero("margem");
+
+      const custoMaterial = peso * (precoFilamento / 1000);
+      const custoEnergia = (watts / 1000) * horas * tarifa;
+      const custoDepreciacao = (precoImpressora / vidaUtil) * horas;
+      const custoMaoObra = maoObra * horas;
+
+      const custoTotal = custoMaterial + custoEnergia + custoDepreciacao + custoMaoObra + outros;
+      const precoFinal = custoTotal * (1 + margem / 100);
+      const precoUnitario = precoFinal / quantidade;
+
+      document.getElementById("resultado").innerHTML = `
+        <strong>Custo do material:</strong> R$ ${custoMaterial.toFixed(2)}<br>
+        <strong>Custo de energia:</strong> R$ ${custoEnergia.toFixed(2)}<br>
+        <strong>Depreciação da impressora:</strong> R$ ${custoDepreciacao.toFixed(2)}<br>
+        <strong>Mão de obra:</strong> R$ ${custoMaoObra.toFixed(2)}<br>
+        <strong>Outros custos:</strong> R$ ${outros.toFixed(2)}<br>
+        <strong>Quantidade de itens:</strong> ${quantidade}<br><br>
+        <strong style="font-size:18px; color:#2e7d32;">Preço final sugerido: R$ ${precoFinal.toFixed(2)}</strong><br>
+        <strong style="font-size:18px; color:#1565c0;">Preço por item: R$ ${precoUnitario.toFixed(2)}</strong>
+      `;
+    }
+  </script>
+
+</body>
+</html>
